@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#111318">
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="icon" href="icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>ThumbCode</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css">
@@ -42,15 +45,29 @@ dialog{background:#232733;color:var(--tx);border:0;border-radius:12px;padding:16
 dialog::backdrop{background:#0008}dialog input{width:100%;margin:6px 0 10px;padding:8px;border-radius:8px;border:1px solid var(--key2);background:var(--bg);color:var(--tx);font-size:15px;-webkit-user-select:text;user-select:text}
 dialog .b{display:flex;gap:8px;justify-content:flex-end}dialog button{padding:8px 14px;touch-action:auto}dialog label{font-size:12px;color:var(--mu)}
 #toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:#000c;padding:8px 14px;border-radius:8px;font-size:13px;display:none;z-index:9}
+#top{height:auto;min-height:36px;flex-wrap:wrap;row-gap:4px;padding:3px 6px}
+#tabs{display:flex;gap:6px;order:3}#top .sp{order:4}#bUndo{order:5}#bRedo{order:6}#bLay{order:7}#bFull{order:8}#bSet{order:9}#run{order:10}
+#bDrawer{order:1}#fn{order:2;flex:0 1 auto;max-width:28%}.brk{display:none;order:6}
+@media (max-width:720px){
+ #fn{flex:1;max-width:none;order:2}#bUndo{order:3}#bRedo{order:4}#run{order:5}
+ .brk{display:block;order:6;flex-basis:100%;height:0}
+ #tabs{order:7}#top .sp{order:8}#bLay{order:9}#bFull{order:10}#bSet{order:11}
+}
+#drawer .f b{font-size:20px;line-height:1;padding:4px 12px;margin:-4px -6px -4px 0}
+#drawer .f{min-height:40px}
+.col{display:flex;flex-direction:column;gap:8px}
+#toast{align-items:center;white-space:nowrap}#toast button{touch-action:auto;padding:5px 12px}
 </style>
 </head>
 <body>
 <div id="root">
   <div id="top">
     <button class="chip" id="bDrawer">☰</button><span id="fn"></span>
-    <button class="chip" data-t="code">Code</button><button class="chip" data-t="input">Input</button><button class="chip" data-t="output">Output</button>
+    <span id="tabs"><button class="chip" data-t="code">Code</button><button class="chip" data-t="input">Input</button><button class="chip" data-t="output">Output</button></span>
     <span class="sp"></span>
+    <button class="chip" id="bUndo" title="Undo">↶</button><button class="chip" id="bRedo" title="Redo">↷</button>
     <button class="chip" id="bLay"></button><button class="chip" id="bFull" title="Full screen">⛶</button><button class="chip" id="bSet">⚙</button><button id="run">▶ Run</button>
+    <i class="brk"></i>
   </div>
   <div id="app" class="split">
     <div id="kl" class="kb"></div>
@@ -63,6 +80,8 @@ dialog .b{display:flex;gap:8px;justify-content:flex-end}dialog button{padding:8p
   </div>
 </div>
 <dialog id="dNew"><label>New file (.cpp, .java, .py)</label><input id="iNew" autocapitalize="off" autocomplete="off" spellcheck="false"><div class="b"><button id="nNo">Cancel</button><button id="nYes" class="chip on">Create</button></div></dialog>
+<dialog id="dMenu"><div id="mTitle" style="margin-bottom:12px;font-weight:600"></div><div class="col"><button id="mRen" class="chip">Rename</button><button id="mDup" class="chip">Duplicate</button><button id="mDel" class="chip" style="color:var(--er)">Delete</button><button id="mNo" class="chip">Close</button></div></dialog>
+<dialog id="dRen"><label>Rename file</label><input id="iRen" autocapitalize="off" autocomplete="off" spellcheck="false"><div class="b"><button id="rNo">Cancel</button><button id="rYes" class="chip on">Rename</button></div></dialog>
 <dialog id="dSet"><label>Judge0 server URL</label><input id="iUrl" autocapitalize="off" autocomplete="off"><label>Auth token (optional)</label><input id="iTok" autocapitalize="off" autocomplete="off"><div class="b"><button id="sNo">Cancel</button><button id="sYes" class="chip on">Save</button></div></dialog>
 <div id="toast"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
@@ -84,7 +103,7 @@ try{var raw=localStorage.getItem('thumbcode.v1');if(raw)S=Object.assign(S,JSON.p
 if(!S.files){S.files={};Object.keys(LANGS).forEach(function(k){S.files[LANGS[k].file]=LANGS[k].tpl})}
 if(!S.files[S.cur])S.cur=Object.keys(S.files)[0];
 if(!localStorage.getItem('thumbcode.v1')&&innerHeight>innerWidth)S.layout='stack';
-function save(){S.files[S.cur]=cmCode.getValue();S.input=cmIn.getValue();try{localStorage.setItem('thumbcode.v1',JSON.stringify(S))}catch(e){}}
+function save(){if(S.cur&&S.files[S.cur]!==undefined)S.files[S.cur]=cmCode.getValue();S.input=cmIn.getValue();try{localStorage.setItem('thumbcode.v1',JSON.stringify(S))}catch(e){}}
 // ---- editors ----
 function mk(host,ln){var cm=CodeMirror($(host),{lineNumbers:ln,theme:'material-darker',indentUnit:4,tabSize:4,indentWithTabs:false,smartIndent:true,electricChars:true});
  cm.getInputField().setAttribute('inputmode','none');cm.getInputField().setAttribute('autocapitalize','off');return cm}
@@ -102,7 +121,9 @@ function showTab(t){tab=t;['code','input','output'].forEach(function(k){$({code:
 document.querySelectorAll('[data-t]').forEach(function(b){b.onclick=function(){showTab(b.dataset.t)}});
 function setLay(l){S.layout=l;$('app').className=l;$('bLay').textContent='⊞ '+l[0].toUpperCase()+l.slice(1);setTimeout(function(){cmCode.refresh();cmIn.refresh()},50);save()}
 $('bLay').onclick=function(){setLay(LAY[(LAY.indexOf(S.layout)+1)%LAY.length])};
-function toast(t){var e=$('toast');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(function(){e.style.display='none'},2600)}
+function toast(t,label,fn){var e=$('toast');e.innerHTML='';var s=document.createElement('span');s.textContent=t;e.appendChild(s);
+ if(label){var b=document.createElement('button');b.textContent=label;b.className='chip on';b.style.marginLeft='12px';b.onclick=function(){fn();e.style.display='none'};e.appendChild(b)}
+ e.style.display='flex';clearTimeout(toast.t);toast.t=setTimeout(function(){e.style.display='none'},label?7000:2600)}
 $('bFull').onclick=function(){
  var d=document,el=d.documentElement;
  if(d.fullscreenElement){d.exitFullscreen();return}
@@ -165,19 +186,40 @@ function stopHold(id){var h=holds[id];if(h){clearTimeout(h.t);clearInterval(h.i)
  ['pointerup','pointercancel','pointerleave'].forEach(function(n){el.addEventListener(n,up)});
  el.addEventListener('mousedown',function(e){e.preventDefault()});el.addEventListener('contextmenu',function(e){e.preventDefault()})});
 // ---- files ----
+function names(){return Object.keys(S.files).sort()}
+function fixName(n){n=n.trim();return n&&n.indexOf('.')<0?n+'.cpp':n}
+function okName(n,old){if(!/^[A-Za-z0-9._-]+$/.test(n)||n.charAt(0)==='.'||!langOf(n)){toast('Use letters/digits and .cpp .java .py');return false}
+ if(n!==old&&S.files[n]!==undefined){toast('That file already exists');return false}return true}
 function drawer(){var d=$('drawer'),h='<div class="h">FILES</div>';
- Object.keys(S.files).sort().forEach(function(n){h+='<div class="f'+(n===S.cur?' cur':'')+'" data-f="'+n+'"><span>'+n+'</span>'+(Object.keys(S.files).length>1?'<b data-x="'+n+'">✕</b>':'')+'</div>'});
+ names().forEach(function(n){h+='<div class="f'+(n===S.cur?' cur':'')+'" data-f="'+n+'"><span>'+n+'</span><b data-m="'+n+'">⋯</b></div>'});
  d.innerHTML=h+'<div class="n" data-new="1">+ New file</div>'}
 $('bDrawer').onclick=function(){var d=$('drawer');drawer();d.style.display=d.style.display==='block'?'none':'block'};
+var menuFile=null,lastDel=null;
 $('drawer').addEventListener('click',function(e){var t=e.target;
- if(t.dataset.x){delete S.files[t.dataset.x];if(S.cur===t.dataset.x)loadFile(Object.keys(S.files)[0]);drawer();save();return}
+ if(t.dataset.m){menuFile=t.dataset.m;$('mTitle').textContent=menuFile;$('dMenu').showModal();return}
  if(t.dataset.new){$('iNew').value='';$('dNew').showModal();return}
  var f=t.closest('.f');if(f){save();loadFile(f.dataset.f);$('drawer').style.display='none';showTab('code')}});
+function delFile(n){if(names().length<2){toast('Keep at least one file');return}
+ save();lastDel={n:n,t:S.files[n],cur:S.cur===n};delete S.files[n];
+ if(lastDel.cur){S.cur=null;loadFile(names()[0])}
+ save();toast('Deleted '+n,'Undo',undoDelete)}
+function undoDelete(){if(!lastDel)return;save();S.files[lastDel.n]=lastDel.t;if(lastDel.cur)loadFile(lastDel.n);lastDel=null;drawer();save()}
+$('mNo').onclick=function(){$('dMenu').close()};
+$('mDel').onclick=function(){$('dMenu').close();delFile(menuFile);drawer()};
+$('mDup').onclick=function(){$('dMenu').close();save();var m=/^(.*?)(\.[^.]+)$/.exec(menuFile),i=1,n;
+ do{n=m[1]+'_copy'+(i>1?i:'')+m[2];i++}while(S.files[n]!==undefined);S.files[n]=S.files[menuFile];drawer();save();toast('Created '+n)};
+$('mRen').onclick=function(){$('dMenu').close();$('iRen').value=menuFile;$('dRen').showModal()};
+$('rNo').onclick=function(){$('dRen').close()};
+$('rYes').onclick=function(){var n=fixName($('iRen').value);if(!n||n===menuFile){$('dRen').close();return}if(!okName(n,menuFile))return;
+ save();S.files[n]=S.files[menuFile];delete S.files[menuFile];if(S.cur===menuFile){S.cur=n;$('fn').textContent=n;var l=langOf(n);cmCode.setOption('mode',l?l.mode:'text/plain')}
+ $('dRen').close();drawer();save()};
 $('nNo').onclick=function(){$('dNew').close()};
-$('nYes').onclick=function(){var n=$('iNew').value.trim();if(!n)return;if(n.indexOf('.')<0)n+='.cpp';
- if(!/^[A-Za-z0-9._-]+$/.test(n)||!langOf(n)){toast('Use letters/digits and .cpp .java .py');return}
- if(S.files[n]){toast('That file exists');return}
+$('nYes').onclick=function(){var n=fixName($('iNew').value);if(!n||!okName(n))return;
  save();S.files[n]=langOf(n).tpl;loadFile(n);$('dNew').close();$('drawer').style.display='none';showTab('code');save()};
+// ---- undo / redo buttons ----
+function ed(){return tab==='output'?cmCode:act()}
+$('bUndo').onclick=function(){ed().undo()};$('bRedo').onclick=function(){ed().redo()};
+['bUndo','bRedo'].forEach(function(id){$(id).addEventListener('mousedown',function(e){e.preventDefault()})});
 $('bSet').onclick=function(){$('iUrl').value=S.url;$('iTok').value=S.tok;$('dSet').showModal()};
 $('sNo').onclick=function(){$('dSet').close()};
 $('sYes').onclick=function(){S.url=$('iUrl').value.trim().replace(/\/+$/,'')||'https://ce.judge0.com';S.tok=$('iTok').value.trim();save();$('dSet').close()};

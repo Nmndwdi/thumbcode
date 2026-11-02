@@ -23,8 +23,10 @@ button{font:inherit;color:var(--tx);background:var(--key);border:0;border-radius
 #run{background:var(--ok);color:#000;padding:5px 14px;font-size:13px;font-weight:600}#run.busy{background:var(--am)}
 #app{flex:1;min-height:0;display:grid;gap:6px;padding:2px 6px 6px}
 #app.split{grid-template-columns:1fr 1fr 1fr;grid-template-areas:"kl ed kr"}
-#app.wide{grid-template-columns:2fr 1fr 1fr;grid-template-areas:"ed kl kr"}
-#app.stack{grid-template-columns:1fr 1fr;grid-template-rows:1.1fr .9fr;grid-template-areas:"ed ed" "kl kr"}
+#app.wide{grid-template-columns:14fr 6fr 8fr;grid-template-areas:"ed kl kr"}
+#app.wide.kbleft{grid-template-columns:6fr 8fr 14fr;grid-template-areas:"kl kr ed"}
+#app.wide .kb.std,#app.stack .kb.std{width:100%}
+#app.stack{grid-template-columns:6fr 8fr;grid-template-rows:1fr auto;grid-template-areas:"ed ed" "kl kr"}
 #app.focus{grid-template-columns:1fr;grid-template-areas:"ed"}
 #app.focus .kb{display:none}
 #ed{grid-area:ed;position:relative;background:var(--pn);border-radius:10px;overflow:hidden;min-width:0;min-height:0;display:flex;flex-direction:column;-webkit-user-select:text;user-select:text}
@@ -34,29 +36,54 @@ button{font:inherit;color:var(--tx);background:var(--key);border:0;border-radius
 .row button.w{flex:2}.row button.s{background:var(--key2);font-size:clamp(11px,2.8vmin,15px)}
 .row button.d,.row button.on{background:var(--ac)}
 .pane{flex:1;min-height:0;display:none}.pane.show{display:block}
-.CodeMirror{height:100%;font:13px/1.45 ui-monospace,Menlo,Consolas,monospace;background:transparent}
+.CodeMirror{height:100%;font:var(--ef)/1.45 ui-monospace,Menlo,Consolas,monospace;background:transparent}
 .CodeMirror-gutters{background:transparent;border:0}
-#out{margin:0;padding:10px;overflow:auto;height:100%;font:13px/1.45 ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word}
+#out{margin:0;padding:10px;overflow:auto;height:100%;font:var(--ef)/1.45 ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word}
 #out .m{color:var(--mu)}#out .g{color:var(--ok)}#out .a{color:var(--am)}#out .e{color:var(--er)}#out div{margin-bottom:8px}
 #drawer{position:absolute;left:0;top:0;bottom:0;width:190px;background:#232733;padding:6px;display:none;z-index:5;overflow:auto}
 #drawer .f{display:flex;align-items:center;padding:8px;border-radius:8px;font-size:14px}.f.cur{background:var(--key2)}.f span{flex:1;overflow:hidden;text-overflow:ellipsis}.f b{color:var(--mu);padding-left:8px}
 #drawer .h{color:var(--mu);font-size:11px;padding:4px}#drawer .n{color:var(--ac);padding:8px;font-size:14px}
-dialog{background:#232733;color:var(--tx);border:0;border-radius:12px;padding:16px;max-width:90vw;width:340px}
+dialog{max-height:92vh;overflow:auto;background:#232733;color:var(--tx);border:0;border-radius:12px;padding:16px;max-width:90vw;width:340px}
 dialog::backdrop{background:#0008}dialog input{width:100%;margin:6px 0 10px;padding:8px;border-radius:8px;border:1px solid var(--key2);background:var(--bg);color:var(--tx);font-size:15px;-webkit-user-select:text;user-select:text}
 dialog .b{display:flex;gap:8px;justify-content:flex-end}dialog button{padding:8px 14px;touch-action:auto}dialog label{font-size:12px;color:var(--mu)}
 #toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:#000c;padding:8px 14px;border-radius:8px;font-size:13px;display:none;z-index:9}
 #top{height:auto;min-height:36px;flex-wrap:wrap;row-gap:4px;padding:3px 6px}
-#tabs{display:flex;gap:6px;order:3}#top .sp{order:4}#bUndo{order:5}#bRedo{order:6}#bLay{order:7}#bFull{order:8}#bSet{order:9}#run{order:10}
-#bDrawer{order:1}#fn{order:2;flex:0 1 auto;max-width:28%}.brk{display:none;order:6}
+#tabs{display:flex;gap:6px;order:3}#top .sp{order:4}#bUndo{order:5}#bRedo{order:6}#clip{order:7}#bLay{order:8}#bFull{order:9}#bSet{order:10}#run{order:11}
+#bDrawer{order:1}#fn{order:2;flex:0 1 auto;max-width:22%}.brk{display:none;order:6}
+#clip{display:flex;gap:4px}#clip .chip{padding:5px 8px;font-size:12px}
 @media (max-width:720px){
- #fn{flex:1;max-width:none;order:2}#bUndo{order:3}#bRedo{order:4}#run{order:5}
- .brk{display:block;order:6;flex-basis:100%;height:0}
- #tabs{order:7}#top .sp{order:8}#bLay{order:9}#bFull{order:10}#bSet{order:11}
+ #fn{flex:1;max-width:none;order:2}#bLay{order:3}#bFull{order:4}#bSet{order:5}#run{order:6}
+ .brk{display:block;order:7;flex-basis:100%;height:0}
+ #tabs{order:8}#bUndo{order:9}#bRedo{order:10}#clip{order:11}#top .sp{display:none}
 }
 #drawer .f b{font-size:20px;line-height:1;padding:4px 12px;margin:-4px -6px -4px 0}
 #drawer .f{min-height:40px}
 .col{display:flex;flex-direction:column;gap:8px}
 #toast{align-items:center;white-space:nowrap}#toast button{touch-action:auto;padding:5px 12px}
+#app.split{grid-template-columns:auto 1fr auto}
+:root{--cw:36px;--kw:36px;--kh:40px;--sh:30px;--kf:1;--ef:13px}
+#kl{--cols:6}#kr{--cols:8}
+.kb.std{display:grid;grid-template-columns:repeat(var(--cols),1fr);grid-template-rows:none;grid-auto-rows:var(--kh);gap:3px;align-content:end;align-self:end;width:min(calc(var(--cols)*var(--kw) + (var(--cols) - 1)*3px),48vw)}
+.std button{display:flex;align-items:center;justify-content:center;position:relative;min-width:0;border-radius:6px;padding:0}
+.std button.s{background:var(--key2)}.std button.d{background:var(--ac)}
+.std i{font-style:normal;line-height:1;pointer-events:none}
+.std i.a{font-size:calc(var(--cw)*.44*var(--kf))}.std button.s i.a{font-size:calc(var(--cw)*.34*var(--kf))}
+.std i.b{position:absolute;top:2px;left:4px;font-size:max(7px,calc(var(--cw)*.25*var(--kf)));color:var(--mu)}
+.sh .std i.a:not(.l){position:absolute;top:2px;left:4px;font-size:max(7px,calc(var(--cw)*.25*var(--kf)));color:var(--mu)}
+.sh .std i.b{position:static;font-size:calc(var(--cw)*.44*var(--kf));color:var(--tx)}
+.sh .std i.a.l,.caps .std i.a.l{text-transform:uppercase}.sh.caps .std i.a.l{text-transform:none}
+.sh .std button[data-k=SHIFT],.caps .std button[data-k=CAPS]{background:var(--ac)}
+.std button.sn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 2px;background:#242c42;color:#a9c1ff;font-size:max(9px,calc(var(--cw)*.3*var(--kf)));font-family:ui-monospace,Menlo,Consolas,monospace;border-radius:6px}
+.std button.sn.d{background:var(--ac);color:#fff}
+.snip{background:rgba(91,140,255,.30);border-radius:3px}
+#sg{position:fixed;z-index:20;display:none;background:#232733;border:1px solid var(--key2);border-radius:8px;box-shadow:0 4px 14px #0008;padding:3px;gap:3px;-webkit-user-select:none;user-select:none;touch-action:none;font:13px ui-monospace,Menlo,Consolas,monospace}
+#sg.list{flex-direction:column;min-width:120px}
+#sg.blocks{flex-direction:row;flex-wrap:wrap;background:transparent;border:0;box-shadow:none;padding:0}
+#sg b{font-weight:400;padding:7px 11px;border-radius:6px;background:var(--key);color:var(--tx);white-space:nowrap}
+#sg.blocks b{background:#2f3547;box-shadow:0 2px 6px #0009}
+#sg u{text-decoration:none;color:var(--ac);font-weight:700}
+dialog select{width:100%;margin:6px 0 10px;padding:8px;border-radius:8px;border:1px solid var(--key2);background:var(--bg);color:var(--tx);font-size:15px}
+dialog input[type=range]{padding:0;border:0;background:transparent}
 </style>
 </head>
 <body>
@@ -66,6 +93,7 @@ dialog .b{display:flex;gap:8px;justify-content:flex-end}dialog button{padding:8p
     <span id="tabs"><button class="chip" data-t="code">Code</button><button class="chip" data-t="input">Input</button><button class="chip" data-t="output">Output</button></span>
     <span class="sp"></span>
     <button class="chip" id="bUndo" title="Undo">↶</button><button class="chip" id="bRedo" title="Redo">↷</button>
+    <span id="clip"><button class="chip" id="bAll">All</button><button class="chip" id="bCut">Cut</button><button class="chip" id="bCopy">Copy</button><button class="chip" id="bPaste">Paste</button></span>
     <button class="chip" id="bLay"></button><button class="chip" id="bFull" title="Full screen">⛶</button><button class="chip" id="bSet">⚙</button><button id="run">▶ Run</button>
     <i class="brk"></i>
   </div>
@@ -82,7 +110,17 @@ dialog .b{display:flex;gap:8px;justify-content:flex-end}dialog button{padding:8p
 <dialog id="dNew"><label>New file (.cpp, .java, .py)</label><input id="iNew" autocapitalize="off" autocomplete="off" spellcheck="false"><div class="b"><button id="nNo">Cancel</button><button id="nYes" class="chip on">Create</button></div></dialog>
 <dialog id="dMenu"><div id="mTitle" style="margin-bottom:12px;font-weight:600"></div><div class="col"><button id="mRen" class="chip">Rename</button><button id="mDup" class="chip">Duplicate</button><button id="mDel" class="chip" style="color:var(--er)">Delete</button><button id="mNo" class="chip">Close</button></div></dialog>
 <dialog id="dRen"><label>Rename file</label><input id="iRen" autocapitalize="off" autocomplete="off" spellcheck="false"><div class="b"><button id="rNo">Cancel</button><button id="rYes" class="chip on">Rename</button></div></dialog>
-<dialog id="dSet"><label>Judge0 server URL</label><input id="iUrl" autocapitalize="off" autocomplete="off"><label>Auth token (optional)</label><input id="iTok" autocapitalize="off" autocomplete="off"><div class="b"><button id="sNo">Cancel</button><button id="sYes" class="chip on">Save</button></div></dialog>
+<dialog id="dSet">
+<label>Key size (Split layout): <b id="ksv"></b></label><input id="iKs" type="range" min="40" max="120" step="5">
+<label>Key height: <b id="khv"></b></label><input id="iKh" type="range" min="80" max="160" step="5">
+<label>Key font size: <b id="kfv"></b></label><input id="iKf" type="range" min="60" max="160" step="5">
+<label>Editor font size: <b id="efv"></b></label><input id="iEf" type="range" min="5" max="24" step="1"><label>Snippet rows (Split layout): <b id="srv"></b></label><input id="iSr" type="range" min="0" max="3" step="1">
+<label>Wide layout: keyboard on</label><select id="iWs"><option value="right">Right half</option><option value="left">Left half</option></select>
+<label>Suggestions</label><select id="iSg"><option value="list">List near cursor</option><option value="blocks">Blocks above cursor</option><option value="off">Off</option></select>
+<label>Max suggestions: <b id="smv"></b></label><input id="iSm" type="range" min="1" max="10" step="1">
+<label>Judge0 server URL</label><input id="iUrl" autocapitalize="off" autocomplete="off">
+<label>Auth token (optional)</label><input id="iTok" autocapitalize="off" autocomplete="off">
+<div class="b"><button id="sNo">Cancel</button><button id="sYes" class="chip on">Save</button></div></dialog>
 <div id="toast"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
@@ -98,7 +136,7 @@ var LANGS={
 };
 function langOf(n){var m=/\.([a-z]+)$/i.exec(n);return m&&LANGS[m[1].toLowerCase()]?LANGS[m[1].toLowerCase()]:null}
 // ---- storage ----
-var S={files:null,cur:'Main.cpp',input:'5\n',layout:'split',url:'https://ce.judge0.com',tok:''};
+var S={files:null,cur:'Main.cpp',input:'5\n',layout:'split',ks:60,kh:115,kf:100,ef:13,sr:3,ws:'right',sg:'list',sm:5,url:'https://ce.judge0.com',tok:''};
 try{var raw=localStorage.getItem('thumbcode.v1');if(raw)S=Object.assign(S,JSON.parse(raw))}catch(e){}
 if(!S.files){S.files={};Object.keys(LANGS).forEach(function(k){S.files[LANGS[k].file]=LANGS[k].tpl})}
 if(!S.files[S.cur])S.cur=Object.keys(S.files)[0];
@@ -108,18 +146,18 @@ function save(){if(S.cur&&S.files[S.cur]!==undefined)S.files[S.cur]=cmCode.getVa
 function mk(host,ln){var cm=CodeMirror($(host),{lineNumbers:ln,theme:'material-darker',indentUnit:4,tabSize:4,indentWithTabs:false,smartIndent:true,electricChars:true});
  cm.getInputField().setAttribute('inputmode','none');cm.getInputField().setAttribute('autocapitalize','off');return cm}
 var cmCode=mk('pCode',true),cmIn=mk('pIn',false);
-var tab='code';
+var tab='code',SR=3,SGM='list',SMX=5;
 function act(){return tab==='input'?cmIn:cmCode}
-function loadFile(n){S.cur=n;cmCode.setValue(S.files[n]);cmCode.clearHistory();var l=langOf(n);cmCode.setOption('mode',l?l.mode:'text/plain');$('fn').textContent=n;cmCode.setCursor({line:0,ch:0})}
+function loadFile(n){S.cur=n;cmCode.setValue(S.files[n]);cmCode.clearHistory();var l=langOf(n);cmCode.setOption('mode',l?l.mode:'text/plain');$('fn').textContent=n;cmCode.setCursor({line:0,ch:0});clearSnip();sgHide();if(typeof STD==='object')render()}
 cmIn.setValue(S.input);loadFile(S.cur);
 setInterval(save,4000);addEventListener('pagehide',save);document.addEventListener('visibilitychange',save);
 // ---- tabs, layout ----
 var LAY=['split','wide','stack','focus'];
-function showTab(t){tab=t;['code','input','output'].forEach(function(k){$({code:'pCode',input:'pIn',output:'pOut'}[k]).classList.toggle('show',k===t)});
+function showTab(t){tab=t;if(t!=='code')sgHide();['code','input','output'].forEach(function(k){$({code:'pCode',input:'pIn',output:'pOut'}[k]).classList.toggle('show',k===t)});
  document.querySelectorAll('[data-t]').forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});
  if(t==='code'){cmCode.refresh();cmCode.focus()}if(t==='input'){cmIn.refresh();cmIn.focus()}}
 document.querySelectorAll('[data-t]').forEach(function(b){b.onclick=function(){showTab(b.dataset.t)}});
-function setLay(l){S.layout=l;$('app').className=l;$('bLay').textContent='⊞ '+l[0].toUpperCase()+l.slice(1);setTimeout(function(){cmCode.refresh();cmIn.refresh()},50);save()}
+function setLay(l){S.layout=l;sgHide();var a=$('app');LAY.forEach(function(x){a.classList.remove(x)});a.classList.add(l);render();updSh();$('bLay').textContent='⊞ '+l[0].toUpperCase()+l.slice(1);setTimeout(function(){cmCode.refresh();cmIn.refresh()},50);save()}
 $('bLay').onclick=function(){setLay(LAY[(LAY.indexOf(S.layout)+1)%LAY.length])};
 function toast(t,label,fn){var e=$('toast');e.innerHTML='';var s=document.createElement('span');s.textContent=t;e.appendChild(s);
  if(label){var b=document.createElement('button');b.textContent=label;b.className='chip on';b.style.marginLeft='12px';b.onclick=function(){fn();e.style.display='none'};e.appendChild(b)}
@@ -131,19 +169,37 @@ $('bFull').onclick=function(){
  el.requestFullscreen().then(function(){if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('landscape').catch(function(){})}).catch(function(){toast('Full screen was blocked by the browser.')})};
 document.addEventListener('fullscreenchange',function(){setTimeout(function(){cmCode.refresh();cmIn.refresh()},100)});
 // ---- keyboard ----
-var ABC={L:[['1','2','3','4','5'],['q','w','e','r','t'],['a','s','d','f','g'],['z','x','c','v','b']],R:[['6','7','8','9','0'],['y','u','i','o','p'],['h','j','k','l',';'],['n','m',',','.','_']]};
-var SYM={L:[['(',')','{','}','['],['<','>','=','+','-'],['#','%','\\','~','?'],['@','$','`','^',':']],R:[[']',';','"',"'",'&'],['*','/','|','!','.'],['LEFT','UP','DOWN','RIGHT','DEL'],['HOME','END','UNDO','REDO','_']]};
-var BOT={L:['SHIFT','SYM','TAB','SPACE'],R:['SPACE','BKSP','ENTER']};
-var LBL={SHIFT:'⇧',TAB:'Tab',SPACE:'space',BKSP:'⌫',DEL:'⌦',ENTER:'⏎',LEFT:'←',RIGHT:'→',UP:'↑',DOWN:'↓',HOME:'⇤',END:'⇥',UNDO:'↶',REDO:'↷'};
 var REP={BKSP:1,DEL:1,LEFT:1,RIGHT:1,UP:1,DOWN:1};
-var shift=false,sym=false;
-function build(side,el){var rows=(sym?SYM:ABC)[side],h='';
- function btn(k,cls){var t=k.length>1?(k==='SYM'?(sym?'ABC':'#+='):LBL[k]):(shift&&/[a-z]/.test(k)?k.toUpperCase():k);
-  var c=(cls||'')+(k.length>1?' s':'')+((k==='SHIFT'&&shift)||(k==='SYM'&&sym)?' on':'');
-  return '<button class="'+c+'" data-k="'+k.replace(/"/g,'&quot;')+'">'+t+'</button>'}
- rows.forEach(function(r){h+='<div class="row">'+r.map(function(k){return btn(k)}).join('')+'</div>'});
- h+='<div class="row">'+BOT[side].map(function(k){return btn(k,k==='SPACE'?'w':'')}).join('')+'</div>';el.innerHTML=h}
-function render(){build('L',$('kl'));build('R',$('kr'))}
+var LBL={SHIFT:'⇧',CAPS:'⇪',TAB:'Tab',ESC:'Esc',SPACE:'space',BKSP:'⌫',DEL:'⌦',ENTER:'⏎',LEFT:'←',RIGHT:'→',UP:'↑',DOWN:'↓',HOME:'⇤',END:'⇥',UNDO:'↶',REDO:'↷'};
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+// --- standard keyboard (Split): a normal QWERTY split in two halves, 7 columns each ---
+// two-character strings are [normal, shifted]; [name, width] sets a key wider than one column
+var STD={
+ L:[['`~','1!','2@','3#','4$','5%'],
+    ['TAB','q','w','e','r','t'],
+    ['CAPS','a','s','d','f','g'],
+    ['SHIFT','z','x','c','v','b'],
+    ['ESC','UNDO','REDO',['SPACE',3]]],
+ R:[['6^','7&','8*','9(','0)','-_','=+','BKSP'],
+    ['y','u','i','o','p','[{',']}','\\|'],
+    ['h','j','k','l',';:',"'\"",['ENTER',2]],
+    ['n','m',',<','.>','/?','SHIFT','UP','BKSP'],
+    [['SPACE',5],'LEFT','DOWN','RIGHT']]};
+function item(it){var k=Array.isArray(it)?it[0]:it,w=Array.isArray(it)?it[1]:1,sty=w>1?' style="grid-column:span '+w+'"':'';
+ if(k.length===2&&!/^[A-Z]{2}$/.test(k))return '<button data-k="'+esc(k[0])+'" data-s="'+esc(k[1])+'"'+sty+'><i class="b">'+esc(k[1])+'</i><i class="a">'+esc(k[0])+'</i></button>';
+ if(k.length===1)return '<button data-k="'+esc(k)+'"'+sty+'><i class="a l">'+esc(k)+'</i></button>';
+ return '<button class="s" data-k="'+k+'"'+sty+'><i class="a">'+(k==='SPACE'?'':(LBL[k]||k))+'</i></button>'}
+function sizeKeys(){[['kl',6],['kr',8]].forEach(function(p){var el=$(p[0]);if(el.clientWidth)el.style.setProperty('--cw',((el.clientWidth-(p[1]-1)*3)/p[1])+'px')})}
+function render(){[['kl','L'],['kr','R']].forEach(function(p){var el=$(p[0]);el.classList.add('std');var n=Math.max(0,Math.min(3,SR));
+ el.style.gridTemplateRows=(n?'repeat('+n+',var(--sh)) ':'')+'repeat(5,var(--kh))';
+ el.innerHTML=snipBtns(p[1],n)+STD[p[1]].map(function(r){return r.map(item).join('')}).join('')});sizeKeys()}
+if(window.ResizeObserver){var ro=new ResizeObserver(sizeKeys);ro.observe($('kl'));ro.observe($('kr'))}
+addEventListener('resize',sizeKeys);
+// shift: hold it with one thumb while pressing another key, or tap it once for the next key only. CAPS locks letters.
+var sh={held:0,sticky:false,used:false,t:0},caps=false,shiftPtr={},selMode=false;
+function effShift(){return sh.held>0||sh.sticky}
+function updSh(){var a=$('app');a.classList.toggle('sh',effShift());a.classList.toggle('caps',caps)}
+// --- editing actions ---
 var PAIR={'(':')','[':']','{':'}','"':'"',"'":"'"},CLOSE=')]}"\'';
 function smart(){return act()===cmCode}
 function typeChar(c){var cm=act();
@@ -160,31 +216,149 @@ function enter(){var cm=act();if(!smart()){cm.replaceSelection('\n','end');retur
  var cur=cm.getCursor(),ln=cm.getLine(cur.line),b=ln.slice(0,cur.ch),a=ln.slice(cur.ch);
  if(/\{$/.test(b)&&/^\}/.test(a)){cm.replaceSelection('\n\n','end');var l=cur.line;cm.indentLine(l+1,'smart');cm.indentLine(l+2,'smart');cm.setCursor({line:l+1,ch:cm.getLine(l+1).length})}
  else cm.execCommand('newlineAndIndent')}
-function press(k){var cm=act();
- if(k==='SHIFT'){shift=!shift;render();return}
- if(k==='SYM'){sym=!sym;render();return}
+// runs one resolved key: a single character to type, or an action name
+// shift + arrow / Home / End extends the selection from where it started
+function extendBy(cm,k){var r=cm.listSelections()[0],h=r.head,p,f;
+ switch(k){
+  case 'LEFT':p=cm.findPosH(h,-1,'char');break;
+  case 'RIGHT':p=cm.findPosH(h,1,'char');break;
+  case 'UP':p=h.line>0?{line:h.line-1,ch:Math.min(h.ch,cm.getLine(h.line-1).length)}:{line:0,ch:0};break;
+  case 'DOWN':p=h.line<cm.lastLine()?{line:h.line+1,ch:Math.min(h.ch,cm.getLine(h.line+1).length)}:{line:h.line,ch:cm.getLine(h.line).length};break;
+  case 'HOME':f=cm.getLine(h.line).search(/\S/);if(f<0)f=0;p={line:h.line,ch:h.ch===f?0:f};break;
+  default:p={line:h.line,ch:cm.getLine(h.line).length}}
+ cm.setSelection(r.anchor,p)}
+function common(k){var cm=act();
  if(tab==='output'){showTab('code');cm=act()}
  if(!cm.hasFocus())cm.focus();
- if(navigator.vibrate)navigator.vibrate(6);
+ if(navigator.vibrate)navigator.vibrate(5);
  switch(k){
-  case 'TAB':cm.replaceSelection('    ','end');break;
+  case 'TAB':if(cm===cmCode&&(nextField()||sgFirst()))break;cm.replaceSelection('    ','end');break;
   case 'SPACE':cm.replaceSelection(' ','end');break;
+  case 'ESC':clearSnip();sgHide();cm.setCursor(cm.getCursor());$('drawer').style.display='none';break;
   case 'BKSP':bksp();break;case 'DEL':cm.execCommand('delCharAfter');break;
   case 'ENTER':enter();break;
-  case 'LEFT':cm.execCommand('goCharLeft');break;case 'RIGHT':cm.execCommand('goCharRight');break;
-  case 'UP':cm.execCommand('goLineUp');break;case 'DOWN':cm.execCommand('goLineDown');break;
-  case 'HOME':cm.execCommand('goLineStartSmart');break;case 'END':cm.execCommand('goLineEnd');break;
+  case 'LEFT':case 'RIGHT':case 'UP':case 'DOWN':case 'HOME':case 'END':
+   if(selMode)extendBy(cm,k);else cm.execCommand({LEFT:'goCharLeft',RIGHT:'goCharRight',UP:'goLineUp',DOWN:'goLineDown',HOME:'goLineStartSmart',END:'goLineEnd'}[k]);break;
   case 'UNDO':cm.undo();break;case 'REDO':cm.redo();break;
-  default:var c=k;if(shift&&/[a-z]/.test(k)){c=k.toUpperCase();shift=false;render()}typeChar(c)}}
+  default:typeChar(k)}}
+function resolve(b){var k=b.dataset.k,s=b.dataset.s;
+ if(s)return effShift()?s:k;
+ if(/^[a-z]$/.test(k))return effShift()!==caps?k.toUpperCase():k;
+ return k}
 var holds={};
+function hold(id,fn){var h=holds[id]={};h.t=setTimeout(function(){h.i=setInterval(fn,55)},350)}
 function stopHold(id){var h=holds[id];if(h){clearTimeout(h.t);clearInterval(h.i);delete holds[id]}}
+function stdDown(b,e){var k=b.dataset.k;
+ if(b.dataset.sn){var q=b.dataset.sn.split('.'),row=(SN[curLangKey()]||[])[+q[0]],s=row&&row[+q[1]];if(s){if(navigator.vibrate)navigator.vibrate(5);runSnippet(s[1])}return}
+ if(k==='SHIFT'){sh.held++;sh.used=false;sh.t=Date.now();shiftPtr[e.pointerId]=1;updSh();return}
+ if(k==='CAPS'){caps=!caps;updSh();return}
+ var out=resolve(b),sel=effShift();if(sh.held>0)sh.used=true;
+ var go=function(){selMode=sel;common(out)};
+ go();if(sh.sticky)sh.sticky=false;updSh();
+ if(REP[k])hold(e.pointerId,go)}
 ['kl','kr'].forEach(function(id){var el=$(id);
- el.addEventListener('pointerdown',function(e){var b=e.target.closest('button');if(!b)return;e.preventDefault();
-  var k=b.getAttribute('data-k');b.classList.add('d');press(k);
-  if(REP[k]){var h=holds[e.pointerId]={};h.t=setTimeout(function(){h.i=setInterval(function(){press(k)},55)},350)}});
- function up(e){var b=e.target.closest&&e.target.closest('button');if(b)b.classList.remove('d');stopHold(e.pointerId)}
+ el.addEventListener('pointerdown',function(e){var b=e.target.closest('button');if(!b)return;e.preventDefault();b.classList.add('d');
+  stdDown(b,e)});
+ function up(e){var b=e.target.closest&&e.target.closest('button');if(b)b.classList.remove('d');stopHold(e.pointerId);
+  if(shiftPtr[e.pointerId]){delete shiftPtr[e.pointerId];sh.held=Math.max(0,sh.held-1);
+   if(!sh.used&&Date.now()-sh.t<450)sh.sticky=!sh.sticky;updSh()}}
  ['pointerup','pointercancel','pointerleave'].forEach(function(n){el.addEventListener(n,up)});
  el.addEventListener('mousedown',function(e){e.preventDefault()});el.addEventListener('contextmenu',function(e){e.preventDefault()})});
+// ---- snippets: language-aware templates shown above the Split keyboard ----
+// ${1:i} = first field (default text i), ${1} = mirrors field 1, ${0} = where the cursor ends. Tab jumps to the next field.
+var SN={
+cpp:[
+ [['for','for (int ${1:i} = 0; ${1} < ${2:n}; ${1}++) {\n    ${0}\n}'],['rfor','for (int ${1:i} = ${2:n} - 1; ${1} >= 0; ${1}--) {\n    ${0}\n}'],['each','for (auto& ${1:x} : ${2:v}) {\n    ${0}\n}'],['while','while (${1:cond}) {\n    ${0}\n}'],['if','if (${1:cond}) {\n    ${0}\n}'],['ifel','if (${1:cond}) {\n    ${2}\n} else {\n    ${0}\n}'],
+  ['switch','switch (${1:x}) {\n    case ${2:0}:\n        ${0}\n        break;\n    default:\n        break;\n}'],['func','${1:int} ${2:name}(${3}) {\n    ${0}\n}'],['tc','int ${1:t};\ncin >> ${1};\nwhile (${1}--) {\n    ${0}\n}'],['ret','return ${0};'],['brk','break;'],['cont','continue;'],['main','int main() {\n    ${0}\n    return 0;\n}'],['do','do {\n    ${0}\n} while (${1:cond});']],
+ [['vec','vector<${1:int}> ${2:v}(${3:n});'],['vv','vector<vector<${1:int}>> ${2:g}(${3:n}, vector<${1}>(${4:m}));'],['map','map<${1:int}, ${2:int}> ${3:mp};'],['umap','unordered_map<${1:int}, ${2:int}> ${3:mp};'],['set','set<${1:int}> ${2:s};'],['pq','priority_queue<${1:int}> ${2:pq};'],
+  ['minpq','priority_queue<${1:int}, vector<${1}>, greater<${1}>> ${2:pq};'],['queue','queue<${1:int}> ${2:q};'],['stack','stack<${1:int}> ${2:st};'],['deque','deque<${1:int}> ${2:dq};'],['pair','pair<${1:int}, ${2:int}> ${3:p};'],['array','array<${1:int}, ${2:N}> ${3:a};'],['str','string ${1:s};'],['bits','bitset<${1:N}> ${2:b};']],
+ [['read','for (int ${1:i} = 0; ${1} < ${2:n}; ${1}++) cin >> ${3:a}[${1}];'],['cin','cin >> ${0};'],['cout','cout << ${1} << "\\n";'],['inc','#include <bits/stdc++.h>\nusing namespace std;'],['ll','long long ${0}'],['sort','sort(${1:v}.begin(), ${1}.end());'],
+  ['rev','reverse(${1:v}.begin(), ${1}.end());'],['lb','lower_bound(${1:v}.begin(), ${1}.end(), ${2:x})'],['max','max(${1:a}, ${2:b})'],['min','min(${1:a}, ${2:b})'],['push','${1:v}.push_back(${0});'],['size','${1:v}.size()'],['all','${1:v}.begin(), ${1}.end()'],['fastio','ios::sync_with_stdio(false);\ncin.tie(nullptr);']]
+],
+java:[
+ [['for','for (int ${1:i} = 0; ${1} < ${2:n}; ${1}++) {\n    ${0}\n}'],['rfor','for (int ${1:i} = ${2:n} - 1; ${1} >= 0; ${1}--) {\n    ${0}\n}'],['each','for (${1:int} ${2:x} : ${3:arr}) {\n    ${0}\n}'],['while','while (${1:cond}) {\n    ${0}\n}'],['if','if (${1:cond}) {\n    ${0}\n}'],['ifel','if (${1:cond}) {\n    ${2}\n} else {\n    ${0}\n}'],
+  ['switch','switch (${1:x}) {\n    case ${2:0}:\n        ${0}\n        break;\n    default:\n        break;\n}'],['func','static ${1:int} ${2:name}(${3}) {\n    ${0}\n}'],['tc','int ${1:t} = Integer.parseInt(br.readLine().trim());\nwhile (${1}-- > 0) {\n    ${0}\n}'],['ret','return ${0};'],['brk','break;'],['cont','continue;'],['main','public static void main(String[] args) throws IOException {\n    ${0}\n}'],['try','try {\n    ${0}\n} catch (${1:Exception} ${2:e}) {\n    ${3}\n}']],
+ [['list','List<${1:Integer}> ${2:list} = new ArrayList<>();'],['map','Map<${1:Integer}, ${2:Integer}> ${3:map} = new HashMap<>();'],['tmap','TreeMap<${1:Integer}, ${2:Integer}> ${3:map} = new TreeMap<>();'],['set','Set<${1:Integer}> ${2:set} = new HashSet<>();'],['tset','TreeSet<${1:Integer}> ${2:set} = new TreeSet<>();'],['pq','PriorityQueue<${1:Integer}> ${2:pq} = new PriorityQueue<>();'],
+  ['maxpq','PriorityQueue<${1:Integer}> ${2:pq} = new PriorityQueue<>(Collections.reverseOrder());'],['deque','Deque<${1:Integer}> ${2:dq} = new ArrayDeque<>();'],['queue','Queue<${1:Integer}> ${2:q} = new LinkedList<>();'],['array','int[] ${1:a} = new int[${2:n}];'],['grid','int[][] ${1:g} = new int[${2:n}][${3:m}];'],['sb','StringBuilder ${1:sb} = new StringBuilder();'],['long','long ${1:x} = ${0};'],['pair','int[] ${1:p} = {${2:a}, ${3:b}};']],
+ [['reader','BufferedReader br = new BufferedReader(new InputStreamReader(System.in));'],['token','StringTokenizer ${1:st} = new StringTokenizer(br.readLine());'],['readint','int ${1:n} = Integer.parseInt(${2:st}.nextToken());'],['println','System.out.println(${0});'],['print','System.out.print(${0});'],['sort','Arrays.sort(${1:a});'],
+  ['fill','Arrays.fill(${1:a}, ${2:0});'],['csort','Collections.sort(${1:list});'],['max','Math.max(${1:a}, ${2:b})'],['min','Math.min(${1:a}, ${2:b})'],['abs','Math.abs(${0})'],['import','import java.io.*;\nimport java.util.*;'],['writer','PrintWriter ${1:out} = new PrintWriter(new BufferedWriter(new OutputStreamWriter(System.out)));'],['len','${1:a}.length']]
+],
+py:[
+ [['for','for ${1:i} in range(${2:n}):\n    ${0}'],['rfor','for ${1:i} in range(${2:n} - 1, -1, -1):\n    ${0}'],['each','for ${1:x} in ${2:arr}:\n    ${0}'],['enum','for ${1:i}, ${2:x} in enumerate(${3:arr}):\n    ${0}'],['while','while ${1:cond}:\n    ${0}'],['if','if ${1:cond}:\n    ${0}'],
+  ['ifel','if ${1:cond}:\n    ${2:pass}\nelse:\n    ${0}'],['elif','elif ${1:cond}:\n    ${0}'],['def','def ${1:name}(${2}):\n    ${0}'],['ret','return ${0}'],['brk','break'],['cont','continue'],['tc','for _ in range(int(input())):\n    ${0}'],['try','try:\n    ${1}\nexcept ${2:Exception} as ${3:e}:\n    ${0}']],
+ [['list','${1:a} = []'],['dict','${1:d} = {}'],['set','${1:s} = set()'],['ddict','${1:d} = defaultdict(${2:int})'],['count','${1:c} = Counter(${2:arr})'],['deque','${1:dq} = deque()'],
+  ['hpush','heapq.heappush(${1:h}, ${2:x})'],['hpop','heapq.heappop(${1:h})'],['grid','${1:g} = [[${2:0}] * ${3:m} for _ in range(${4:n})]'],['comp','[${1:x} for ${1} in ${2:arr}]'],['zeros','${1:a} = [0] * ${2:n}'],['join','"".join(${1:lst})'],['tuple','(${1}, ${2})'],['lambda','lambda ${1:x}: ${0}']],
+ [['input','${1:n} = int(input())'],['ints','${1:a} = list(map(int, input().split()))'],['two','${1:a}, ${2:b} = map(int, input().split())'],['fastin','import sys\ninput = sys.stdin.readline'],['print','print(${0})'],['sort','${1:a}.sort()'],
+  ['sorted','sorted(${1:a}, key=lambda ${2:x}: ${3:x})'],['rev','${1:a}.reverse()'],['append','${1:a}.append(${0})'],['max','max(${1:a})'],['min','min(${1:a})'],['len','len(${1:a})'],['import','from collections import *\nimport heapq, math, sys'],['main','if __name__ == "__main__":\n    ${0}']]
+]};
+function curLangKey(){var l=langOf(S.cur);for(var k in LANGS)if(LANGS[k]===l)return k;return 'cpp'}
+function snipBtns(side,n){var rows=SN[curLangKey()]||[],h='',off=side==='L'?0:6,cnt=side==='L'?6:8;
+ for(var r=0;r<n;r++){var row=rows[r]||[];for(var c=0;c<cnt;c++){var s=row[off+c];
+  h+=s?'<button class="sn" data-sn="'+r+'.'+(off+c)+'">'+esc(s[0])+'</button>':'<button class="sn" disabled style="visibility:hidden"></button>'}}
+ return h}
+var snip=null,mirroring=false,MARK={className:'snip',inclusiveLeft:true,inclusiveRight:true,clearWhenEmpty:false};
+function clearSnip(){if(snip){snip.fields.forEach(function(f){f.marks.forEach(function(m){m.clear()})});if(snip.end)snip.end.clear();snip=null}}
+function runSnippet(tpl){var cm=cmCode;if(tab!=='code')showTab('code');cm.focus();clearSnip();
+ var from=cm.getCursor('from'),indent=/^\s*/.exec(cm.getLine(from.line))[0],out='',L=from.line,C=from.ch,fields={},order=[],endPos=null,re=/\$\{(\d+)(?::([^}]*))?\}/g,last=0,m;
+ function add(s){for(var i=0;i<s.length;i++){var ch=s.charAt(i);if(ch==='\n'){out+='\n'+indent;L++;C=indent.length}else{out+=ch;C++}}}
+ while((m=re.exec(tpl))){add(tpl.slice(last,m.index));last=re.lastIndex;var n=+m[1];
+  if(n===0){endPos={line:L,ch:C};continue}
+  var f=fields[n];if(!f){f=fields[n]={n:n,def:m[2]||'',spans:[],marks:[]};order.push(f)}
+  var s0={line:L,ch:C};add(f.def);f.spans.push([s0,{line:L,ch:C}])}
+ add(tpl.slice(last));
+ cm.replaceSelection(out,'end');
+ order.sort(function(a,b){return a.n-b.n});
+ order.forEach(function(f){f.marks=f.spans.map(function(sp){return cm.markText(sp[0],sp[1],MARK)})});
+ snip={fields:order,i:0,end:endPos?cm.setBookmark(endPos):null};
+ if(!order.length){var e=snip.end?snip.end.find():null;clearSnip();if(e)cm.setCursor(e);return}
+ var r=order[0].marks[0].find();cm.setSelection(r.from,r.to)}
+function nextField(){if(!snip||tab!=='code')return false;snip.i++;
+ if(snip.i>=snip.fields.length){var e=snip.end?snip.end.find():null;clearSnip();if(e)cmCode.setCursor(e);return true}
+ var r=snip.fields[snip.i].marks[0].find();cmCode.setSelection(r.from,r.to);return true}
+function inR(p,r){return (p.line>r.from.line||(p.line===r.from.line&&p.ch>=r.from.ch))&&(p.line<r.to.line||(p.line===r.to.line&&p.ch<=r.to.ch))}
+// keep every copy of a field identical to the one being edited
+cmCode.on('change',function(){if(!snip||mirroring)return;var cm=cmCode,cur=cm.getCursor();mirroring=true;
+ try{cm.operation(function(){snip.fields.forEach(function(f){if(f.marks.length<2)return;var si=-1,r;
+  for(var i=0;i<f.marks.length;i++){r=f.marks[i].find();if(r&&inR(cur,r)){si=i;break}}
+  if(si<0)return;var sr=f.marks[si].find(),text=cm.getRange(sr.from,sr.to);
+  for(var j=0;j<f.marks.length;j++){if(j===si)continue;var o=f.marks[j].find();if(!o)continue;
+   if(cm.getRange(o.from,o.to)!==text){f.marks[j].clear();cm.replaceRange(text,o.from,o.to);f.marks[j]=cm.markText(o.from,{line:o.from.line,ch:o.from.ch+text.length},MARK)}}})})}
+ finally{mirroring=false}});
+// ---- suggestions: words from this file + common keywords for the current language ----
+var KW={
+ cpp:('vector string push_back pop_back size begin end sort reverse unordered_map unordered_set priority_queue queue stack deque set map multiset bitset tuple array pair make_pair first second emplace_back lower_bound upper_bound accumulate iota memset abs sqrt pow swap min max cout cin endl long double char bool void int return break continue include namespace using struct class const auto nullptr true false while switch case default template typename static inline constexpr numeric_limits iterator front back empty clear insert erase find count resize assign substr length to_string stoi stoll unique next_permutation').split(' '),
+ java:('public private protected static final class interface void int long double boolean char String StringBuilder StringTokenizer ArrayList LinkedList HashMap TreeMap HashSet TreeSet ArrayDeque PriorityQueue Queue Deque List Map Set Arrays Collections Math Integer Long System out println print printf BufferedReader InputStreamReader readLine parseInt nextToken length size get put add remove contains containsKey getOrDefault return break continue while switch case default throws new this null true false try catch finally import extends implements').split(' '),
+ py:('def class return import from as if elif else for while break continue pass lambda try except finally with in not and or is None True False range len enumerate zip map filter sorted reversed list dict set tuple print input int str float append extend pop sort reverse join split strip defaultdict Counter deque heapq heappush heappop math sqrt gcd sys stdin readline min max sum abs any all isinstance').split(' ')
+};
+var SG=document.createElement('div');SG.id='sg';document.body.appendChild(SG);
+var sgItems=[],sgFrame=0,WORD=/[A-Za-z_][A-Za-z0-9_]*$/;
+function sgHide(){if(!SG)return;SG.style.display='none';SG.innerHTML='';sgItems=[]}
+function sgUpdate(){
+ if(SGM==='off'||tab!=='code'||cmCode.somethingSelected()){sgHide();return}
+ var cm=cmCode,cur=cm.getCursor(),m=WORD.exec(cm.getLine(cur.line).slice(0,cur.ch));
+ if(!m||m[0].length<2){sgHide();return}
+ var pre=m[0],low=pre.toLowerCase(),counts={},order=[],re=/[A-Za-z_][A-Za-z0-9_]*/g,w,txt=cm.getValue(),off=cm.indexFromPos(cur)-pre.length;
+ while((w=re.exec(txt))){if(w.index===off)continue;var x=w[0];
+  if(x.length>pre.length&&x.toLowerCase().indexOf(low)===0){if(!counts[x]){counts[x]=0;order.push(x)}counts[x]++}}
+ order.sort(function(a,b){return counts[b]-counts[a]||a.length-b.length||(a<b?-1:1)});
+ var seen={};order.forEach(function(x){seen[x]=1});
+ (KW[curLangKey()]||[]).forEach(function(k){if(!seen[k]&&k.length>pre.length&&k.toLowerCase().indexOf(low)===0){order.push(k);seen[k]=1}});
+ var list=order.slice(0,SMX);if(!list.length){sgHide();return}
+ sgItems=list;SG.className=SGM;
+ SG.innerHTML=list.map(function(x,i){return '<b data-i="'+i+'"><u>'+esc(x.slice(0,pre.length))+'</u>'+esc(x.slice(pre.length))+'</b>'}).join('');
+ SG.style.display='flex';
+ try{var c=cm.cursorCoords(cur,'window'),r=$('ed').getBoundingClientRect();
+  SG.style.maxWidth=SGM==='blocks'?(r.width-8)+'px':'';
+  var w2=SG.offsetWidth,h=SG.offsetHeight,x0=Math.min(Math.max(c.left,r.left+4),Math.max(r.left+4,r.right-w2-4)),below=c.bottom+4,above=c.top-4-h,y;
+  if(SGM==='list')y=below+h<=r.bottom?below:Math.max(r.top+2,above);
+  else y=above>=r.top?above:Math.min(below,r.bottom-h);
+  SG.style.left=x0+'px';SG.style.top=y+'px'}catch(e){}}
+function sgAccept(i){var w=sgItems[i];if(!w)return;var cm=cmCode,cur=cm.getCursor(),m=WORD.exec(cm.getLine(cur.line).slice(0,cur.ch));if(!m)return;
+ cm.replaceRange(w,{line:cur.line,ch:cur.ch-m[0].length},cur);sgHide();cm.focus()}
+function sgFirst(){if(SG.style.display!=='none'&&sgItems.length){sgAccept(0);return true}return false}
+cmCode.on('cursorActivity',function(){if(sgFrame)return;sgFrame=requestAnimationFrame(function(){sgFrame=0;sgUpdate()})});
+SG.addEventListener('pointerdown',function(e){var b=e.target.closest('b');if(!b)return;e.preventDefault();if(navigator.vibrate)navigator.vibrate(5);sgAccept(+b.dataset.i)});
+SG.addEventListener('mousedown',function(e){e.preventDefault()});
 // ---- files ----
 function names(){return Object.keys(S.files).sort()}
 function fixName(n){n=n.trim();return n&&n.indexOf('.')<0?n+'.cpp':n}
@@ -212,7 +386,7 @@ $('mRen').onclick=function(){$('dMenu').close();$('iRen').value=menuFile;$('dRen
 $('rNo').onclick=function(){$('dRen').close()};
 $('rYes').onclick=function(){var n=fixName($('iRen').value);if(!n||n===menuFile){$('dRen').close();return}if(!okName(n,menuFile))return;
  save();S.files[n]=S.files[menuFile];delete S.files[menuFile];if(S.cur===menuFile){S.cur=n;$('fn').textContent=n;var l=langOf(n);cmCode.setOption('mode',l?l.mode:'text/plain')}
- $('dRen').close();drawer();save()};
+ $('dRen').close();drawer();render();save()};
 $('nNo').onclick=function(){$('dNew').close()};
 $('nYes').onclick=function(){var n=fixName($('iNew').value);if(!n||!okName(n))return;
  save();S.files[n]=langOf(n).tpl;loadFile(n);$('dNew').close();$('drawer').style.display='none';showTab('code');save()};
@@ -220,9 +394,35 @@ $('nYes').onclick=function(){var n=fixName($('iNew').value);if(!n||!okName(n))re
 function ed(){return tab==='output'?cmCode:act()}
 $('bUndo').onclick=function(){ed().undo()};$('bRedo').onclick=function(){ed().redo()};
 ['bUndo','bRedo'].forEach(function(id){$(id).addEventListener('mousedown',function(e){e.preventDefault()})});
-$('bSet').onclick=function(){$('iUrl').value=S.url;$('iTok').value=S.tok;$('dSet').showModal()};
-$('sNo').onclick=function(){$('dSet').close()};
-$('sYes').onclick=function(){S.url=$('iUrl').value.trim().replace(/\/+$/,'')||'https://ce.judge0.com';S.tok=$('iTok').value.trim();save();$('dSet').close()};
+// ---- clipboard buttons ----
+function copyText(s){
+ var p=navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(s):Promise.reject();
+ return p.catch(function(){var ta=document.createElement('textarea');ta.value=s;ta.style.cssText='position:fixed;opacity:0;top:0;left:0';document.body.appendChild(ta);ta.select();
+  var ok=false;try{ok=document.execCommand('copy')}catch(e){}document.body.removeChild(ta);if(!ok)throw new Error('copy failed')})}
+function outSel(){var s=window.getSelection();return s&&!s.isCollapsed&&$('out').contains(s.anchorNode)?s.toString():''}
+$('bAll').onclick=function(){
+ if(tab==='output'){var r=document.createRange();r.selectNodeContents($('out'));var s=window.getSelection();s.removeAllRanges();s.addRange(r);return}
+ ed().execCommand('selectAll');ed().focus()};
+$('bCopy').onclick=function(){var s=tab==='output'?(outSel()||$('out').textContent):ed().getSelection();
+ if(!s){toast('Select some text first');return}
+ copyText(s).then(function(){toast('Copied')},function(){toast('Copy was blocked by the browser')})};
+$('bCut').onclick=function(){if(tab==='output'){toast('Output can only be copied');return}
+ var cm=ed(),s=cm.getSelection();if(!s){toast('Select some text first');return}
+ copyText(s).then(function(){cm.replaceSelection('');cm.focus();toast('Cut')},function(){toast('Cut was blocked by the browser')})};
+$('bPaste').onclick=function(){var cm=ed();if(tab==='output')showTab('code');
+ if(!navigator.clipboard||!navigator.clipboard.readText){toast('Paste is not available in this browser');return}
+ navigator.clipboard.readText().then(function(s){if(!s){toast('Clipboard is empty');return}cm.replaceSelection(s,'end');cm.focus()},function(){toast('Allow clipboard access to paste')})};
+['bAll','bCut','bCopy','bPaste'].forEach(function(id){$(id).addEventListener('mousedown',function(e){e.preventDefault()})});
+var DISP=[['ks','iKs','ksv','%'],['kh','iKh','khv','%'],['kf','iKf','kfv','%'],['ef','iEf','efv','px'],['sr','iSr','srv',''],['sm','iSm','smv','']];
+function applyUI(o){var r=document.documentElement.style;
+ r.setProperty('--kw',(60*o.ks/100)+'px');r.setProperty('--kh',(56*o.ks/100*o.kh/100)+'px');r.setProperty('--kf',o.kf/100);r.setProperty('--ef',o.ef+'px');r.setProperty('--sh',(56*o.ks/100*o.kh/100*.78)+'px');SR=o.sr;SGM=o.sg;SMX=o.sm;$('app').classList.toggle('kbleft',o.ws==='left');
+ DISP.forEach(function(d){$(d[2]).textContent=o[d[0]]+d[3]});cmCode.refresh();cmIn.refresh();if(typeof STD==='object')render();if(SGM==='off')sgHide()}
+function sliders(){var o={};DISP.forEach(function(d){o[d[0]]=+$(d[1]).value});o.ws=$('iWs').value;o.sg=$('iSg').value;return o}
+DISP.forEach(function(d){$(d[1]).addEventListener('input',function(){applyUI(sliders())})});
+['iWs','iSg'].forEach(function(id){$(id).addEventListener('change',function(){applyUI(sliders())})});
+$('bSet').onclick=function(){$('iUrl').value=S.url;$('iTok').value=S.tok;DISP.forEach(function(d){$(d[1]).value=S[d[0]]});$('iWs').value=S.ws;$('iSg').value=S.sg;applyUI(S);$('dSet').showModal()};
+$('sNo').onclick=function(){applyUI(S);$('dSet').close()};
+$('sYes').onclick=function(){S.url=$('iUrl').value.trim().replace(/\/+$/,'')||'https://ce.judge0.com';S.tok=$('iTok').value.trim();var o=sliders();DISP.forEach(function(d){S[d[0]]=o[d[0]]});S.ws=o.ws;S.sg=o.sg;save();$('dSet').close()};
 // ---- Judge0 ----
 var idCache={};
 function b64(s){return btoa(unescape(encodeURIComponent(s)))}
@@ -251,7 +451,7 @@ $('run').onclick=function(){if(running)return;var l=langOf(S.cur);if(!l){toast('
   if(r.stderr)nodes.push(line('e',unb64(r.stderr)));if(r.message)nodes.push(line('a',unb64(r.message)));show(nodes)})
  .catch(function(e){show([line('e',e.message||String(e))])})
  .then(function(){running=false;$('run').textContent='▶ Run';$('run').classList.remove('busy')})};
-render();setLay(S.layout);showTab('code');
+applyUI(S);render();setLay(S.layout);showTab('code');
 })();
 </script>
 </body>

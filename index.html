@@ -724,8 +724,9 @@ document.addEventListener('touchend',function(){sw=null});document.addEventListe
 brView(S.bv);pnLoad();
 // ---- first-visit tour (some steps are interactive: do the thing and it moves on) ----
 // s = element to highlight, chk = what the visitor has to do, pre = setup, pos:'top' keeps the card off the keyboard
+var APP='ThumbCode';document.title=APP;   // the app's name: change it here
 var TOUR=[
- {t:'Welcome to ThumbCode',x:'Write C++, Java or Python with both thumbs, run it and read the output without leaving this page. This short tour covers the keyboard first, then the rest. A few steps let you try things. Your own code is not touched during the tour.'},
+ {t:'Welcome to '+APP,x:'A phone workspace for solving competitive programming and DSA problems. Write C++, Java or Python on a split keyboard built for two thumbs, run it on a server, and keep the problem statement, your notes and a whiteboard one swipe away, without leaving the page. This tour takes about a minute and a few steps let you try things. Your own code is not touched.'},
  {s:'#kl',t:'A real keyboard, split in two',x:'The left half is for your left thumb, the right half for the right one. It has the keys of a normal keyboard: Esc, Tab, Enter, two Backspaces, two Spaces, two Shifts, Caps, the arrow keys, and Undo and Redo.'},
  {s:'#kl [data-k=SHIFT]',t:'Shift ⇧',x:'Shift types the small character printed on a key: Shift + 2 gives @, Shift + ; gives :, Shift + [ gives {. Hold it with one thumb while the other taps, or tap it once to shift only the next key. There is a second Shift on the right half.'},
  {s:'#kl [data-k=CAPS]',t:'Caps Lock (the Caps key)',x:'Caps Lock keeps LETTERS capital until you tap it again. It never changes numbers or symbols. Use Shift for symbols or a single capital, and Caps Lock for a whole word in capitals.'},

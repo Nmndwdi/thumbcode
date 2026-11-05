@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#111318">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ThumbCode">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="icon" href="icon-192.png" type="image/png" sizes="192x192">
@@ -258,10 +262,15 @@ var rzT;addEventListener('resize',function(){clearTimeout(rzT);rzT=setTimeout(fu
 function toast(t,label,fn){var e=$('toast');e.innerHTML='';var s=document.createElement('span');s.textContent=t;e.appendChild(s);
  if(label){var b=document.createElement('button');b.textContent=label;b.className='chip on';b.style.marginLeft='12px';b.onclick=function(){fn();e.style.display='none'};e.appendChild(b)}
  e.style.display='flex';clearTimeout(toast.t);toast.t=setTimeout(function(){e.style.display='none'},label?7000:2600)}
+// an app opened from the home screen is already full screen: no browser bars, so the button is not needed there
+function isInstalled(){return window.navigator.standalone===true||(window.matchMedia&&(matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches))}
+function isIOS(){return /iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)}
+if(isInstalled())$('bFull').style.display='none';
 $('bFull').onclick=function(){
  var d=document,el=d.documentElement;
  if(d.fullscreenElement){d.exitFullscreen();return}
- if(!el.requestFullscreen){toast('Full screen is not supported here. Use Add to Home Screen.');return}
+ if(isInstalled()){toast('You are already in full screen.');return}
+ if(!el.requestFullscreen){toast(isIOS()?'iPhone Safari cannot full-screen a web page. Tap Share, then Add to Home Screen, and open ThumbCode from that icon.':'Full screen is not supported in this browser.');return}
  el.requestFullscreen().then(function(){if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('landscape').catch(function(){})}).catch(function(){toast('Full screen was blocked by the browser.')})};
 document.addEventListener('fullscreenchange',function(){setTimeout(function(){cmCode.refresh();cmIn.refresh()},100)});
 // ---- keyboard ----

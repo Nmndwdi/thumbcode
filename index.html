@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#111318">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="ThumbCode">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -63,7 +63,7 @@ dialog .b{display:flex;gap:8px;justify-content:flex-end}dialog button{padding:8p
 #drawer .f b{font-size:20px;line-height:1;padding:4px 12px;margin:-4px -6px -4px 0}
 #drawer .f{min-height:40px}
 .col{display:flex;flex-direction:column;gap:8px}
-#toast{align-items:center;white-space:nowrap}#toast button{touch-action:auto;padding:5px 12px}
+#toast{align-items:center;white-space:normal;text-align:center;line-height:1.4;width:max-content;max-width:min(92vw,440px)}#toast button{touch-action:auto;padding:5px 12px}
 #app.split{grid-template-columns:auto 1fr auto}
 :root{--sf:1;--cw:36px;--kw:36px;--kh:40px;--sh:30px;--kf:1;--ef:13px}
 #kl{--cols:6}#kr{--cols:8}
@@ -142,6 +142,9 @@ dialog select{width:100%;margin:6px 0 10px;padding:8px;border-radius:8px;border:
 #app.sidesn .snp{display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(5,var(--kh));gap:3px;align-content:end;align-self:end;-webkit-user-select:none;user-select:none;touch-action:none}
 .snp button{display:flex;align-items:center;justify-content:center;min-width:0}
 dialog input[type=range]{padding:0;border:0;background:transparent}
+html,body{position:fixed;inset:0;width:100%}#root{position:fixed;inset:0;height:auto}
+#kfit{font-size:11px;color:var(--am);margin:-4px 0 8px}#app{overflow:hidden}
+.steps{margin:6px 0 10px;padding-left:20px;line-height:1.5;font-size:14px}.steps li{margin-bottom:6px}.note{font-size:12px;color:var(--mu);line-height:1.4}
 </style>
 </head>
 <body>
@@ -170,9 +173,12 @@ dialog input[type=range]{padding:0;border:0;background:transparent}
 <dialog id="dNew"><label>New file (.cpp, .java, .py)</label><input id="iNew" autocapitalize="off" autocomplete="off" spellcheck="false"><div class="b"><button id="nNo">Cancel</button><button id="nYes" class="chip on">Create</button></div></dialog>
 <dialog id="dMenu"><div id="mTitle" style="margin-bottom:12px;font-weight:600"></div><div class="col"><button id="mRen" class="chip">Rename</button><button id="mDup" class="chip">Duplicate</button><button id="mDel" class="chip" style="color:var(--er)">Delete</button><button id="mNo" class="chip">Close</button></div></dialog>
 <dialog id="dRen"><label>Rename file</label><input id="iRen" autocapitalize="off" autocomplete="off" spellcheck="false"><div class="b"><button id="rNo">Cancel</button><button id="rYes" class="chip on">Rename</button></div></dialog>
+<dialog id="dIos"><b>Full screen on iPhone</b>
+<ol class="steps"><li>Tap the <b>Share</b> button in Safari (the square with an arrow).</li><li>Choose <b>Add to Home Screen</b>.</li><li>Keep <b>Open as Web App</b> switched on, then tap <b>Add</b>.</li><li>Open ThumbCode from the new icon on your home screen. It runs full screen, with no Safari bars.</li><li>Turn the phone sideways. If it does not rotate: swipe down from the top-right corner to open Control Center and tap the <b>Portrait Orientation Lock</b> icon (a padlock with a circular arrow) so it turns off.</li></ol>
+<div class="b"><button id="iosOk" class="chip on">Got it</button></div></dialog>
 <dialog id="dSet">
 <label>Key size (Split layout): <b id="ksv"></b></label><input id="iKs" type="range" min="40" max="120" step="5">
-<label>Key height: <b id="khv"></b></label><input id="iKh" type="range" min="80" max="160" step="5">
+<label>Key height: <b id="khv"></b></label><input id="iKh" type="range" min="80" max="160" step="5"><div id="kfit"></div>
 <label>Key font size: <b id="kfv"></b></label><input id="iKf" type="range" min="60" max="160" step="5">
 <label>Editor font size: <b id="efv"></b></label><input id="iEf" type="range" min="5" max="24" step="1">
 <label>Word wrap</label><select id="iWr"><option value="off">Off</option><option value="on">On</option></select>
@@ -254,11 +260,18 @@ document.querySelectorAll('[data-t]').forEach(function(b){b.onclick=function(){s
 function portrait(){return innerHeight>innerWidth}
 function curLayout(){return portrait()?(S.layoutP==='focus'?'focus':'stack'):S.layout}
 function updSide(){$('app').classList.toggle('sidesn',curLayout()==='stack'&&!portrait()&&SR>0)}
-var layKey='';
+var layKey='',rawKh=40,rawSh=31;
+// the keyboard may never be taller than the screen: shrink the key and snippet heights to fit, and say so in Settings
+function fitKeys(){var app=$('app'),H=app.clientHeight;if(!H)return;var side=app.classList.contains('sidesn'),stack=app.classList.contains('stack'),
+ n=side?0:Math.max(0,Math.min(3,SR)),gaps=(n+4)*3,need=n*rawSh+5*rawKh+gaps,avail=H-8-(stack?110:0),f=1;
+ if(need>avail&&avail>60)f=(avail-gaps)/(need-gaps);f=Math.max(.35,Math.min(1,f));
+ var r=document.documentElement.style;r.setProperty('--kh',(rawKh*f)+'px');r.setProperty('--sh',(rawSh*f)+'px');
+ var h=$('kfit');if(h)h.textContent=f<.999?'Reduced to '+Math.round(f*100)+'% so the keyboard fits this screen.':''}
 function applyLayout(){var l=curLayout(),a=$('app');sgHide();LAY.forEach(function(x){a.classList.remove(x)});a.classList.add(l);updSide();render();updSh();
- $('bLay').textContent='⊞ '+l[0].toUpperCase()+l.slice(1);layKey=l+portrait();setTimeout(function(){cmCode.refresh();cmIn.refresh()},50);save()}
+ $('bLay').textContent='⊞ '+l[0].toUpperCase()+l.slice(1);layKey=l+portrait();fitKeys();setTimeout(function(){cmCode.refresh();cmIn.refresh()},50);save()}
 $('bLay').onclick=function(){var list=portrait()?['stack','focus']:LAY,n=list[(list.indexOf(curLayout())+1)%list.length];if(portrait())S.layoutP=n;else S.layout=n;applyLayout()};
-var rzT;addEventListener('resize',function(){clearTimeout(rzT);rzT=setTimeout(function(){if(curLayout()+portrait()!==layKey)applyLayout()},150)});
+var rzT;addEventListener('resize',function(){clearTimeout(rzT);rzT=setTimeout(function(){window.scrollTo(0,0);if(curLayout()+portrait()!==layKey)applyLayout();else fitKeys()},150)});
+addEventListener('orientationchange',function(){setTimeout(function(){window.scrollTo(0,0);fitKeys()},350)});
 function toast(t,label,fn){var e=$('toast');e.innerHTML='';var s=document.createElement('span');s.textContent=t;e.appendChild(s);
  if(label){var b=document.createElement('button');b.textContent=label;b.className='chip on';b.style.marginLeft='12px';b.onclick=function(){fn();e.style.display='none'};e.appendChild(b)}
  e.style.display='flex';clearTimeout(toast.t);toast.t=setTimeout(function(){e.style.display='none'},label?7000:2600)}
@@ -266,11 +279,12 @@ function toast(t,label,fn){var e=$('toast');e.innerHTML='';var s=document.create
 function isInstalled(){return window.navigator.standalone===true||(window.matchMedia&&(matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches))}
 function isIOS(){return /iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)}
 if(isInstalled())$('bFull').style.display='none';
+$('iosOk').onclick=function(){$('dIos').close()};
 $('bFull').onclick=function(){
  var d=document,el=d.documentElement;
  if(d.fullscreenElement){d.exitFullscreen();return}
  if(isInstalled()){toast('You are already in full screen.');return}
- if(!el.requestFullscreen){toast(isIOS()?'iPhone Safari cannot full-screen a web page. Tap Share, then Add to Home Screen, and open ThumbCode from that icon.':'Full screen is not supported in this browser.');return}
+ if(!el.requestFullscreen){if(isIOS()){$('dIos').showModal()}else toast('Full screen is not supported in this browser.');return}
  el.requestFullscreen().then(function(){if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('landscape').catch(function(){})}).catch(function(){toast('Full screen was blocked by the browser.')})};
 document.addEventListener('fullscreenchange',function(){setTimeout(function(){cmCode.refresh();cmIn.refresh()},100)});
 // ---- keyboard ----
@@ -539,8 +553,8 @@ var brIsOpen=false,BE='top';
 var SEL=[['ws','iWs'],['sg','iSg'],['wr','iWr'],['be','iBe']];
 var DISP=[['ks','iKs','ksv','%'],['kh','iKh','khv','%'],['kf','iKf','kfv','%'],['ef','iEf','efv','px'],['sr','iSr','srv',''],['sf','iSf','sfv','%'],['sm','iSm','smv','']];
 function applyUI(o){var r=document.documentElement.style;
- r.setProperty('--kw',(60*o.ks/100)+'px');r.setProperty('--kh',(56*o.ks/100*o.kh/100)+'px');r.setProperty('--kf',o.kf/100);r.setProperty('--ef',o.ef+'px');r.setProperty('--sf',o.sf/100);r.setProperty('--sh',(56*o.ks/100*o.kh/100*.78)+'px');SR=o.sr;SGM=o.sg;SMX=o.sm;BE=o.be;$('br').className=BE+(brIsOpen?' open':'');$('app').classList.toggle('kbleft',o.ws==='left');updSide();
- DISP.forEach(function(d){$(d[2]).textContent=o[d[0]]+d[3]});cmCode.setOption('lineWrapping',o.wr==='on');cmIn.setOption('lineWrapping',o.wr==='on');cmCode.refresh();cmIn.refresh();if(typeof STD==='object')render();if(SGM==='off')sgHide()}
+ r.setProperty('--kw',(60*o.ks/100)+'px');rawKh=56*o.ks/100*o.kh/100;r.setProperty('--kf',o.kf/100);r.setProperty('--ef',o.ef+'px');r.setProperty('--sf',o.sf/100);rawSh=rawKh*.78;SR=o.sr;SGM=o.sg;SMX=o.sm;BE=o.be;$('br').className=BE+(brIsOpen?' open':'');$('app').classList.toggle('kbleft',o.ws==='left');updSide();
+ DISP.forEach(function(d){$(d[2]).textContent=o[d[0]]+d[3]});cmCode.setOption('lineWrapping',o.wr==='on');cmIn.setOption('lineWrapping',o.wr==='on');cmCode.refresh();cmIn.refresh();if(typeof STD==='object')render();if(SGM==='off')sgHide();fitKeys()}
 function sliders(){var o={};DISP.forEach(function(d){o[d[0]]=+$(d[1]).value});SEL.forEach(function(s){o[s[0]]=$(s[1]).value});return o}
 DISP.forEach(function(d){$(d[1]).addEventListener('input',function(){applyUI(sliders())})});
 SEL.forEach(function(s){$(s[1]).addEventListener('change',function(){applyUI(sliders())})});
@@ -736,6 +750,7 @@ brView(S.bv);pnLoad();
 var APP='ThumbCode';document.title=APP;   // the app's name: change it here
 var TOUR=[
  {t:'Welcome to '+APP,x:'A phone workspace for solving competitive programming and DSA problems. Write C++, Java or Python on a split keyboard built for two thumbs, run it on a server, and keep the problem statement, your notes and a whiteboard one swipe away, without leaving the page. This tour takes about a minute and a few steps let you try things. Your own code is not touched.'},
+ {ios:'rotate',t:'Turn your phone sideways',x:'ThumbCode works best in landscape. Hold your iPhone sideways now. If the screen does not turn, swipe down from the top-right corner to open Control Center, then tap the Portrait Orientation Lock icon (a padlock with a circular arrow) so it turns off.',chk:function(){return !portrait()}},
  {s:'#kl',t:'A real keyboard, split in two',x:'The left half is for your left thumb, the right half for the right one. It has the keys of a normal keyboard: Esc, Tab, Enter, two Backspaces, two Spaces, two Shifts, Caps, the arrow keys, and Undo and Redo.'},
  {s:'#kl [data-k=SHIFT]',t:'Shift ⇧',x:'Shift types the small character printed on a key: Shift + 2 gives @, Shift + ; gives :, Shift + [ gives {. Hold it with one thumb while the other taps, or tap it once to shift only the next key. There is a second Shift on the right half.'},
  {s:'#kl [data-k=CAPS]',t:'Caps Lock (the Caps key)',x:'Caps Lock keeps LETTERS capital until you tap it again. It never changes numbers or symbols. Use Shift for symbols or a single capital, and Caps Lock for a whole word in capitals.'},
@@ -750,7 +765,8 @@ var TOUR=[
  {s:'#clip',t:'Edit tools',x:'Select all, cut, copy and paste. Undo and redo are right beside them.'},
  {s:'#bDrawer',t:'Files',x:'Open, create, rename, duplicate or delete files here.'},
  {s:'#bLay',t:'Layouts',x:'Switch between Split, Wide, Stack and Focus. In portrait you get Stack and Focus. Focus hides the keyboard so you can read.'},
- {s:'#bFull',t:'Full screen ⛶',x:'Hides the browser bars so the whole screen is yours. On Android Chrome it also locks the screen to landscape. Tap it again to leave full screen. iPhone Safari cannot full-screen a web page: use Share, then Add to Home Screen.'},
+ {s:'#bFull',ios:'browser',t:'Full screen on iPhone',x:'Safari cannot full-screen a web page. Tap Share, choose Add to Home Screen, keep Open as Web App on, then open ThumbCode from the new icon. Tap this button any time to see the steps again.'},
+ {s:'#bFull',noios:true,t:'Full screen ⛶',x:'Hides the browser bars so the whole screen is yours. On Android Chrome it also locks the screen to landscape. Tap it again to leave full screen. iPhone Safari cannot full-screen a web page: use Share, then Add to Home Screen.'},
  {s:'#bPanel',t:'Problem, Notes and Board',x:'Slides over the editor. Problem keeps the statement, constraints, input format, output format and samples in separate boxes you can paste into again and again. Notes is for your own observations. Board is a whiteboard: draw on it, or give it an array, tree or graph and it draws that for you. Every box has its own undo and redo. Open it with this button or by swiping in from the edge you pick in Settings.'},
  {s:'#bSet',t:'Settings',x:'Key size and height, fonts, word wrap, suggestions, snippet rows, which side the keyboard sits on, the panel edge, and the run server. You can replay this tour from there.'}];
 var tourI=0,tourList=[],tourBox=false,tourBak=null,tourOk=false,tourT=0;
@@ -760,7 +776,7 @@ function tourStart(){
  tourBox=true;showTab('code');
  if(curLayout()==='focus'){if(portrait())S.layoutP='stack';else S.layout='split';applyLayout()}
  cmCode.setValue(langOf(S.cur)===LANGS.py?'a = 1\nb = 2\n':'int a = 1;\nint b = 2;\n');cmCode.clearHistory();clearSnip();sgHide();
- tourList=TOUR.filter(function(s){if(!s.s)return true;var e=document.querySelector(s.s);if(!e)return false;var r=e.getBoundingClientRect();return r.width>0&&r.height>0});
+ tourList=TOUR.filter(function(s){if(s.ios==='rotate'&&!(isIOS()&&portrait()))return false;if(s.ios==='browser'&&!(isIOS()&&!isInstalled()))return false;if(s.noios&&isIOS())return false;if(!s.s)return true;var e=document.querySelector(s.s);if(!e)return false;var r=e.getBoundingClientRect();return r.width>0&&r.height>0});
  tourI=0;$('tour').style.display='block';tourShow()}
 function tourShow(){var s=tourList[tourI],sp=$('tspot'),c=$('tcard'),e=s.s?document.querySelector(s.s):null;clearTimeout(tourT);tourOk=false;
  if(s.pre)s.pre();if(s.chk&&tab!=='code')showTab('code');
@@ -786,7 +802,7 @@ $('tn').onclick=tourNext;
 $('tb').onclick=function(){if(tourI>0){tourI--;tourShow()}};
 $('tk').onclick=tourEnd;
 $('sTour').onclick=function(){applyUI(S);$('dSet').close();setTimeout(tourStart,250)};
-addEventListener('resize',function(){if($('tour').style.display==='block')tourShow()});
+addEventListener('resize',function(){if($('tour').style.display==='block'){tourCheck();if(!tourOk)tourShow()}});
 // ---- Judge0 ----
 var idCache={};
 function b64(s){return btoa(unescape(encodeURIComponent(s)))}
@@ -815,6 +831,10 @@ $('run').onclick=function(){if(running)return;var l=langOf(S.cur);if(!l){toast('
   if(r.stderr)nodes.push(line('e',unb64(r.stderr)));if(r.message)nodes.push(line('a',unb64(r.message)));show(nodes)})
  .catch(function(e){show([line('e',e.message||String(e))])})
  .then(function(){running=false;$('run').textContent='▶ Run';$('run').classList.remove('busy')})};
+document.addEventListener('pointerdown',function(e){var d=$('drawer');
+ if(d.style.display==='block'&&!d.contains(e.target)&&!e.target.closest('#bDrawer'))d.style.display='none'},true);
+document.querySelectorAll('dialog').forEach(function(dl){dl.addEventListener('click',function(e){if(e.target!==dl)return;var r=dl.getBoundingClientRect();
+ if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom){if(dl.id==='dSet')$('sNo').click();else dl.close()}})});
 applyUI(S);applyLayout();showTab('code');if(!S.tour)setTimeout(tourStart,800);
 })();
 </script>

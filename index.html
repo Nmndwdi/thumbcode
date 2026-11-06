@@ -145,6 +145,8 @@ dialog input[type=range]{padding:0;border:0;background:transparent}
 html,body{position:fixed;inset:0;width:100%}#root{position:fixed;inset:0;height:auto}
 #kfit{font-size:11px;color:var(--am);margin:-4px 0 8px}#app{overflow:hidden}
 .steps{margin:6px 0 10px;padding-left:20px;line-height:1.5;font-size:14px}.steps li{margin-bottom:6px}.note{font-size:12px;color:var(--mu);line-height:1.4}
+:root{--topgap:0px}
+#root{padding-top:max(env(safe-area-inset-top,0px),var(--topgap))}
 </style>
 </head>
 <body>
@@ -184,6 +186,7 @@ html,body{position:fixed;inset:0;width:100%}#root{position:fixed;inset:0;height:
 <label>Word wrap</label><select id="iWr"><option value="off">Off</option><option value="on">On</option></select>
 <label>Problem / Notes / Board panel opens from</label><select id="iBe"><option value="top">Top edge</option><option value="left">Left edge</option><option value="right">Right edge</option></select><label>Snippet rows (Split layout): <b id="srv"></b></label><input id="iSr" type="range" min="0" max="3" step="1">
 <label>Snippet font size: <b id="sfv"></b></label><input id="iSf" type="range" min="50" max="220" step="5">
+<label>Top gap: <b id="tgv"></b></label><input id="iTg" type="range" min="0" max="64" step="2"><div class="note" style="margin:-4px 0 8px">Leaves empty space above the top buttons. On an iPhone, the very top of a home-screen app can ignore taps. If the top buttons only react when you tap just below them, raise this until they react.</div>
 <label>Wide layout: keyboard on</label><select id="iWs"><option value="right">Right half</option><option value="left">Left half</option></select>
 <label>Suggestions</label><select id="iSg"><option value="list">List near cursor</option><option value="blocks">Blocks above cursor</option><option value="off">Off</option></select>
 <label>Max suggestions: <b id="smv"></b></label><input id="iSm" type="range" min="1" max="10" step="1">
@@ -225,7 +228,7 @@ var LANGS={
 };
 function langOf(n){var m=/\.([a-z]+)$/i.exec(n);return m&&LANGS[m[1].toLowerCase()]?LANGS[m[1].toLowerCase()]:null}
 // ---- storage ----
-var S={files:null,cur:'Main.cpp',input:'5\n',layout:'split',ks:60,kh:115,kf:100,ef:13,sr:3,sf:100,wr:'off',be:'top',brs:70,layoutP:'stack',tour:false,notes:{},nh:{},ps:{},bd:{},bv:'prob',ws:'right',sg:'list',sm:5,url:'https://ce.judge0.com',tok:''};
+var S={files:null,cur:'Main.cpp',input:'5\n',layout:'split',ks:60,kh:115,kf:100,ef:13,sr:3,sf:100,wr:'off',be:'top',brs:70,layoutP:'stack',tour:false,tg:(isIOS()&&isInstalled())?40:0,notes:{},nh:{},ps:{},bd:{},bv:'prob',ws:'right',sg:'list',sm:5,url:'https://ce.judge0.com',tok:''};
 try{var raw=localStorage.getItem('thumbcode.v1');if(raw)S=Object.assign(S,JSON.parse(raw))}catch(e){}
 if(!S.files){S.files={};Object.keys(LANGS).forEach(function(k){S.files[LANGS[k].file]=LANGS[k].tpl})}
 if(!S.files[S.cur])S.cur=Object.keys(S.files)[0];
@@ -503,7 +506,7 @@ function okName(n,old){if(!/^[A-Za-z0-9._-]+$/.test(n)||n.charAt(0)==='.'||!lang
 function drawer(){var d=$('drawer'),h='<div class="h">FILES</div>';
  names().forEach(function(n){h+='<div class="f'+(n===S.cur?' cur':'')+'" data-f="'+n+'"><span>'+n+'</span><b data-m="'+n+'">⋯</b></div>'});
  d.innerHTML=h+'<div class="n" data-new="1">+ New file</div>'}
-$('bDrawer').onclick=function(){var d=$('drawer');drawer();d.style.display=d.style.display==='block'?'none':'block'};
+$('bDrawer').onclick=function(){var d=$('drawer');drawer();d.style.display=d.style.display==='block'?'none':'block';if(typeof tourCheck==='function')tourCheck()};
 var menuFile=null,lastDel=null;
 $('drawer').addEventListener('click',function(e){var t=e.target;
  if(t.dataset.m){menuFile=t.dataset.m;$('mTitle').textContent=menuFile;$('dMenu').showModal();return}
@@ -551,9 +554,9 @@ $('bPaste').onclick=function(){var cm=ed();if(tab==='output')showTab('code');
 ['bAll','bCut','bCopy','bPaste'].forEach(function(id){$(id).addEventListener('mousedown',function(e){e.preventDefault()})});
 var brIsOpen=false,BE='top';
 var SEL=[['ws','iWs'],['sg','iSg'],['wr','iWr'],['be','iBe']];
-var DISP=[['ks','iKs','ksv','%'],['kh','iKh','khv','%'],['kf','iKf','kfv','%'],['ef','iEf','efv','px'],['sr','iSr','srv',''],['sf','iSf','sfv','%'],['sm','iSm','smv','']];
+var DISP=[['ks','iKs','ksv','%'],['kh','iKh','khv','%'],['kf','iKf','kfv','%'],['ef','iEf','efv','px'],['sr','iSr','srv',''],['sf','iSf','sfv','%'],['tg','iTg','tgv','px'],['sm','iSm','smv','']];
 function applyUI(o){var r=document.documentElement.style;
- r.setProperty('--kw',(60*o.ks/100)+'px');rawKh=56*o.ks/100*o.kh/100;r.setProperty('--kf',o.kf/100);r.setProperty('--ef',o.ef+'px');r.setProperty('--sf',o.sf/100);rawSh=rawKh*.78;SR=o.sr;SGM=o.sg;SMX=o.sm;BE=o.be;$('br').className=BE+(brIsOpen?' open':'');$('app').classList.toggle('kbleft',o.ws==='left');updSide();
+ r.setProperty('--kw',(60*o.ks/100)+'px');rawKh=56*o.ks/100*o.kh/100;r.setProperty('--kf',o.kf/100);r.setProperty('--ef',o.ef+'px');r.setProperty('--sf',o.sf/100);r.setProperty('--topgap',o.tg+'px');rawSh=rawKh*.78;SR=o.sr;SGM=o.sg;SMX=o.sm;BE=o.be;$('br').className=BE+(brIsOpen?' open':'');$('app').classList.toggle('kbleft',o.ws==='left');updSide();
  DISP.forEach(function(d){$(d[2]).textContent=o[d[0]]+d[3]});cmCode.setOption('lineWrapping',o.wr==='on');cmIn.setOption('lineWrapping',o.wr==='on');cmCode.refresh();cmIn.refresh();if(typeof STD==='object')render();if(SGM==='off')sgHide();fitKeys()}
 function sliders(){var o={};DISP.forEach(function(d){o[d[0]]=+$(d[1]).value});SEL.forEach(function(s){o[s[0]]=$(s[1]).value});return o}
 DISP.forEach(function(d){$(d[1]).addEventListener('input',function(){applyUI(sliders())})});
@@ -739,7 +742,7 @@ VZ.graph=VZ.wgraph=function(g,W,H,v){var wt=v.t==='wgraph',L=lns(v.x).map(toks),
  g.addEventListener('pointerup',end);g.addEventListener('pointercancel',end)})();
 var sw=null;
 document.addEventListener('touchstart',function(e){if(brIsOpen||e.touches.length!==1||$('tour').style.display==='block')return;var t=e.touches[0];
- sw=(BE==='top'?t.clientY<46:BE==='left'?t.clientX<36:t.clientX>innerWidth-36)?{x:t.clientX,y:t.clientY}:null},{passive:true});
+ sw=(BE==='top'?t.clientY<$('top').getBoundingClientRect().bottom+8:BE==='left'?t.clientX<36:t.clientX>innerWidth-36)?{x:t.clientX,y:t.clientY}:null},{passive:true});
 document.addEventListener('touchmove',function(e){if(!sw)return;var t=e.touches[0],dx=t.clientX-sw.x,dy=t.clientY-sw.y;
  if((BE==='top'&&dy>56&&Math.abs(dx)<dy)||(BE==='left'&&dx>56&&Math.abs(dy)<dx)||(BE==='right'&&-dx>56&&Math.abs(dy)<-dx)){sw=null;brOpen(true)}},{passive:true});
 document.addEventListener('touchend',function(){sw=null});document.addEventListener('touchcancel',function(){sw=null});
@@ -751,6 +754,7 @@ var APP='ThumbCode';document.title=APP;   // the app's name: change it here
 var TOUR=[
  {t:'Welcome to '+APP,x:'A phone workspace for solving competitive programming and DSA problems. Write C++, Java or Python on a split keyboard built for two thumbs, run it on a server, and keep the problem statement, your notes and a whiteboard one swipe away, without leaving the page. This tour takes about a minute and a few steps let you try things. Your own code is not touched.'},
  {ios:'rotate',t:'Turn your phone sideways',x:'ThumbCode works best in landscape. Hold your iPhone sideways now. If the screen does not turn, swipe down from the top-right corner to open Control Center, then tap the Portrait Orientation Lock icon (a padlock with a circular arrow) so it turns off.',chk:function(){return !portrait()}},
+ {s:'#bDrawer',ios:'touch',t:'Check the top buttons',x:'Tap the ☰ button (the files menu). If nothing happens, tap just below it, then open Settings and raise Top gap until the top buttons react when you tap them. Home-screen apps on some iPhones ignore taps at the very top of the screen.',pos:'top',chk:function(){return $('drawer').style.display==='block'}},
  {s:'#kl',t:'A real keyboard, split in two',x:'The left half is for your left thumb, the right half for the right one. It has the keys of a normal keyboard: Esc, Tab, Enter, two Backspaces, two Spaces, two Shifts, Caps, the arrow keys, and Undo and Redo.'},
  {s:'#kl [data-k=SHIFT]',t:'Shift ⇧',x:'Shift types the small character printed on a key: Shift + 2 gives @, Shift + ; gives :, Shift + [ gives {. Hold it with one thumb while the other taps, or tap it once to shift only the next key. There is a second Shift on the right half.'},
  {s:'#kl [data-k=CAPS]',t:'Caps Lock (the Caps key)',x:'Caps Lock keeps LETTERS capital until you tap it again. It never changes numbers or symbols. Use Shift for symbols or a single capital, and Caps Lock for a whole word in capitals.'},
@@ -776,9 +780,9 @@ function tourStart(){
  tourBox=true;showTab('code');
  if(curLayout()==='focus'){if(portrait())S.layoutP='stack';else S.layout='split';applyLayout()}
  cmCode.setValue(langOf(S.cur)===LANGS.py?'a = 1\nb = 2\n':'int a = 1;\nint b = 2;\n');cmCode.clearHistory();clearSnip();sgHide();
- tourList=TOUR.filter(function(s){if(s.ios==='rotate'&&!(isIOS()&&portrait()))return false;if(s.ios==='browser'&&!(isIOS()&&!isInstalled()))return false;if(s.noios&&isIOS())return false;if(!s.s)return true;var e=document.querySelector(s.s);if(!e)return false;var r=e.getBoundingClientRect();return r.width>0&&r.height>0});
+ tourList=TOUR.filter(function(s){if(s.ios==='rotate'&&!(isIOS()&&portrait()))return false;if(s.ios==='browser'&&!(isIOS()&&!isInstalled()))return false;if(s.ios==='touch'&&!(isIOS()&&isInstalled()))return false;if(s.noios&&isIOS())return false;if(!s.s)return true;var e=document.querySelector(s.s);if(!e)return false;var r=e.getBoundingClientRect();return r.width>0&&r.height>0});
  tourI=0;$('tour').style.display='block';tourShow()}
-function tourShow(){var s=tourList[tourI],sp=$('tspot'),c=$('tcard'),e=s.s?document.querySelector(s.s):null;clearTimeout(tourT);tourOk=false;
+function tourShow(){var s=tourList[tourI],sp=$('tspot'),c=$('tcard'),e=s.s?document.querySelector(s.s):null;clearTimeout(tourT);tourOk=false;$('drawer').style.display='none';
  if(s.pre)s.pre();if(s.chk&&tab!=='code')showTab('code');
  $('tt').textContent=s.t;$('tx').textContent=s.x;$('ty').textContent=s.chk?'Your turn: try it now.':'';$('ty').className='';
  $('tmask').style.pointerEvents=s.chk?'none':'auto';
